@@ -1,0 +1,17 @@
+<!-- Redactor CSS modal HTML -->
+<div id="redactorcss_modal" style="display: none;">
+	<section>
+		<ul id="container" class="redactor_redactorcss_box">
+			{% for class in classes %}
+				<li class="selectable" data-class="{{ class.class | raw }}">
+					<a href="#" class="redactorcss_link">{{ class.label }}</a>
+				</li>
+			{% endfor %}
+		</ul>
+	</section>
+	<footer>
+		<button class="redactor_modal_btn redactor_btn_modal_close" style="width: 230px; float: left;">Cancel</button>
+		<button class="redactor_modal_btn redactor_modal_action_btn" style="width: 230px">Insert</button>
+	</footer>
+</div>
+<!-- end Redactor CSS modal HTML -->
