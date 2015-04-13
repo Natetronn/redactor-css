@@ -1,10 +1,12 @@
+Note to all: currently redactor-css works with Craft 2.2.2607 and below. Craft 2.3.2615 introduces Redactor v.10 and therefore this plugin will require a full re-write.
+
 # Redactor CSS
 
 > Apply CSS classes to your Craft CMS Rich Text fields i.e. Redactor WYSIWYG
 
 ## Installation
 
-**For Craft 2.x**
+**For Craft 2.2.2607 <=**
 
 Download current version and unzip the redactorcss folder.
 
