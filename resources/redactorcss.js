@@ -1,60 +1,66 @@
 if (!RedactorPlugins) var RedactorPlugins = {};
 
-RedactorPlugins.redactorcss = {
+RedactorPlugins.redactorcss = function() {
 
-    init: function() {
-        this.buttonAdd('redactorcss', 'Classes', this.showMyModal);
-    },
+    return {
 
-    showMyModal: function() {
-        var callback = $.proxy(function() {
-            $(".redactor_modal_action_btn").on('click', $.proxy(function(e) {
-                e.preventDefault();
+        init: function()
+		{
+			// Add Font Awesome button
+			var button = this.button.add('redactorcss', 'Classes');
+			this.button.setAwesome('redactorcss', 'fa-css3');
+			this.button.addCallback(button, this.redactorcss.show);
+		},
+		getTemplate: function()
+		{
+			// Grab our labels/classess from RedactorCssPlugin.php
+			var items = RedactorPlugins.redactorcss.items;
 
-                var remove,
-                    classes = [];
+			// Build our template for our modal
+			this.redactorcss.template = $('<ul id="redactor-modal-list">');
 
-                $(".ui-selected").each(function() {
-                    classes.push($(this).data('class'));
-                });
+			for (var i = 0; i < items.length; i++)
+			{
+				var li = $('<li class="redactorcss">');
+				var a = $('<a href="#" class="redactorcss-link">').text(items[i][0]);
+				var div = $('<div class="redactorcss-class">').hide().text(items[i][1]);
 
-                this.insertClass(classes.join(" "));
+				li.append(a);
+				li.append(div);
+				this.redactorcss.template.append(li);
 
-            }, this));
+			}
 
-            this.shiftClick();
-            this.selectionSave();
-            this.bufferSet();
+			return this.utils.getOuterHtml(this.redactorcss.template);
 
-        }, this);
+		},
+		show: function()
+		{
+			this.modal.addTemplate('redactorcss', '<section>' + this.redactorcss.getTemplate() + '</section>');
 
+			this.modal.load('redactorcss', 'Insert Class', 400);
 
+			this.modal.createCancelButton();
 
-        var segment_1 = window.location.pathname.replace(/^\/([^\/]*).*$/, '$1'),
-            edit = '<a class="redactorcss_edit" href="/' + segment_1 +'/settings/plugins/redactorcss">add/edit</a>'
+			//this.selection.save();
+			this.observe.load();
+			this.modal.show();
 
-        this.modalInit('Choose a class (shift or cmd/ctrl click too) - ' + edit + '', '#redactorcss_modal', 500, callback);
-    },
+			$('#redactor-modal-list').focus();
 
-    insertClass: function(classes) {
-        this.selectionRestore();
-        this.blockSetClass(classes);
-        this.modalClose();
-    },
+			$('#redactor-modal-list').find('.redactorcss-link').each($.proxy(this.redactorcss.load, this));
+		},
+		load: function(i,s)
+		{
+			$(s).on('click', $.proxy(function(e)
+			{
+				e.preventDefault();
 
-    shiftClick: function() {
-        var prev = -1;
-        $('#container').selectable({
-            selecting: function(e, ui) {
-                var curr = $(ui.selecting.tagName, e.target).index(ui.selecting);
-                if (e.shiftKey && prev > -1) {
-                    //console.log(prev, curr, Math.min(prev, curr));
-                    $(ui.selecting.tagName, e.target).slice(Math.min(prev, curr), 1 + Math.max(prev, curr)).addClass('ui-selected');
-                    prev = -1;
-                } else {
-                    prev = curr;
-                }
-            }
-        });
-    }
+				var myClass = $(s).next().html();
+				this.inline.toggleClass(myClass);
+				this.modal.close();
+
+			}, this));
+		}
+    };
 };

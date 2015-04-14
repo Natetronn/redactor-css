@@ -13,7 +13,7 @@ class RedactorCssPlugin extends BasePlugin
 
 	public function getVersion()
 	{
-		return '0.1';
+		return '0.2';
 	}
 
 	public function getDeveloper()
@@ -31,15 +31,18 @@ class RedactorCssPlugin extends BasePlugin
 		if (craft()->request->isCpRequest())
 		{
 			craft()->templates->includeCssResource('redactorcss/redactorcss.css');
-			craft()->templates->includeJsResource('redactorcss/jquery-ui-1.10.4.custom.min.js');
-			craft()->templates->includeJsResource('redactorcss/jquery.ui.touch-punch.min.js');
+			craft()->templates->includeCssFile('//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
 			craft()->templates->includeJsResource('redactorcss/redactorcss.js');
 
-			$modalHtml = craft()->templates->render('redactorcss/modal', array(
-				'classes' => $this->getSettings()->classes
-			));
+			$redactorcss = array();
 
-			craft()->templates->includeFootNode($modalHtml);
+			foreach ($this->getSettings()->classes as $class)
+			{
+				$redactorcss[] = array($class['label'], $class['class']);
+			}
+
+			$js = 'RedactorPlugins.redactorcss.items = '.JsonHelper::encode($redactorcss).';';
+			craft()->templates->includeJs($js);
 		}
 	}
 
